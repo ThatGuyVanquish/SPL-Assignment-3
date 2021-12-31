@@ -14,7 +14,7 @@ class socketReader{
     public:
     socketReader(int id, std::mutex& mutex, ConnectionHandler& cHandler, bool* shouldTerminate);
     void run();
-    void bytesToShort(char* bytesArr);
+    short bytesToShort(char* bytesArr);
 };
 
 
