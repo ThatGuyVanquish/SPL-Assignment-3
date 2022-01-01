@@ -7,8 +7,8 @@ public class User {
     private int userId;
     private String username;
     private String password;
-    private Vector<String> followingList;
-    private Vector<String> followersList;
+    private Vector<User> followingList;
+    private Vector<User> followersList;
     private boolean loginStatus;
     
     public User(int userId, String username, String password) {
@@ -35,13 +35,46 @@ public class User {
      * 
      * @param username username of the person to follow
      * @pre ConnectionsImpl.clientMap.includes(username)
+     * ^ meaning a user should exist before calling this
      */
-    public void follow(String username) {
-        this.followingList.add(username);
+    public void follow(User username) {
+        if (this.followingList.indexOf(username) == -1){
+            this.followingList.add(username);
+            username.followedBy(this);
+            // send ack message of successfull follow
+        }
+        else {
+            // send error message of unsuccessfull follow
+        }
+        
     }
 
-    public void unfollow(String username) {
+    /**
+     * Removes a user to this user's following list
+     * If user doesn't exist in the following list it should do nothing
+     * 
+     * @param username username of the person to follow
+     * @pre ConnectionsImpl.clientMap.includes(username)
+     * ^ meaning a user should exist before calling this
+     *
+     */
+    public void unfollow(User username) {
+        if (this.followersList.indexOf(username) != -1) {
+            this.followingList.remove(username);
+            username.unfollowedBy(this);
+            // send ack message of successfull unfollow
+        }
+        else {
+            // send error message of unsuccessfull unfollow
+        }
+    }
 
+    public void followedBy(User username) {
+        this.followersList.add(username);
+    }
+
+    public void unfollowedBy(User username) {
+        this.followersList.remove(username);
     }
 
 }
