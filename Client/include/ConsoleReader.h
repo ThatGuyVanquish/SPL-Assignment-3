@@ -1,7 +1,6 @@
 #ifndef CONSOLE_READER__
 #define CONSOLE_READER__
 
-#include <mutex>
 #include "connectionHandler.h"
 
 class ConsoleReader{

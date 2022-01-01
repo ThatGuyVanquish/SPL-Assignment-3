@@ -47,7 +47,7 @@ void ConsoleReader::run()
         {
             shortToBytes(5, opCode);
             message = "";
-            for (int i = 1; i < msg.size() - 1; i++) 
+            for (int i = 1; i < static_cast<int>(msg.size()) - 1; i++) 
             {
                 message.append(msg[i] + '\0');
             }
@@ -57,7 +57,7 @@ void ConsoleReader::run()
         {
             shortToBytes(6, opCode);
             message = msg[1] + '\0';
-            for (int i = 1; i < msg.size(); i++) 
+            for (int i = 1; i < static_cast<int>(msg.size()); i++) 
             {
                 message.append(msg[i] + '\0');
             }
@@ -79,7 +79,7 @@ void ConsoleReader::run()
         {
             shortToBytes(8, opCode);
             message = "";
-            for (int i = 1; i < msg.size() - 1; i++) 
+            for (int i = 1; i < static_cast<int>(msg.size()) - 1; i++) 
             {
                 message.append(msg[i] + '|');
             }

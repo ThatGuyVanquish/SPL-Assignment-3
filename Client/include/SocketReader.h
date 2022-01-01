@@ -1,8 +1,7 @@
 #ifndef SOCKET_READER__
 #define SOCKET_READER__
 
-#include <mutex>;
-#include "connectionHandler.h";                       
+#include "connectionHandler.h"                    
 
 class SocketReader{
     private: 

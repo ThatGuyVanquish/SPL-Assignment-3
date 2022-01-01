@@ -47,7 +47,7 @@ void SocketReader::run() {
             std::vector<std::string> splitMessage;
             std::string message;
             cHandler.getLine(message);
-            boost::split(splitMessage, message, boost::is_any_of('\0'));
+            boost::split(splitMessage, message, boost::is_any_of("\0"));
             cout<< "NOTIFICATION " << notiType + " " << "@" + splitMessage[0] + " " + splitMessage[1]<<endl;
         }
     }
