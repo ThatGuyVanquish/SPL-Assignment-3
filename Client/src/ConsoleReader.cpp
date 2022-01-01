@@ -1,4 +1,4 @@
-#include "../include/consoleReader.h"
+#include "../include/ConsoleReader.h"
 #include <mutex>
 #include <iostream>
 #include <boost/algorithm/string.hpp>
@@ -6,14 +6,12 @@
 
 using namespace std;
 
-consoleReader::consoleReader(int id, std::mutex& mutex, ConnectionHandler& cHandler, bool* shouldTerminate):
-    id(id), 
-    mutex(mutex), 
+ConsoleReader::ConsoleReader(ConnectionHandler& cHandler, bool* shouldTerminate):
     cHandler(cHandler), 
     shouldTerminate(shouldTerminate)
     {};
 
-void consoleReader::run() 
+void ConsoleReader::run() 
 {
     while (!(*shouldTerminate))
     {
@@ -87,8 +85,8 @@ void consoleReader::run()
     }
 }
 
-void shortToBytes(short num, char* bytesArr)
-{
-    bytesArr[0] = ((num >> 8) & 0xFF);
-    bytesArr[1] = (num & 0xFF);
-}
+// void shortToBytes(short num, char* bytesArr)
+// {
+//     bytesArr[0] = ((num >> 8) & 0xFF);
+//     bytesArr[1] = (num & 0xFF);
+// }

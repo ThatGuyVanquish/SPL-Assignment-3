@@ -1,18 +1,16 @@
-#include "../include/socketReader.h"
+#include "../include/SocketReader.h"
 #include <mutex>
 using namespace std;
 
 
-socketReader::socketReader(int id, std::mutex &mutex, ConnectionHandler &handler, bool* shouldTerminate): 
-id(id), 
-mutex(mutex), 
+SocketReader::SocketReader(ConnectionHandler &handler, bool* shouldTerminate): 
 cHandler(handler), 
 shouldTerminate(shouldTerminate)
 {};
 
-void socketReader::run() {
+void SocketReader::run() {
     while (!(*shouldTerminate)) {
-        mutex.try_lock();
+        //mutex.try_lock();
         char message[2];
         cHandler.getBytes(message, 2);
         short opCode = bytesToShort(message);
@@ -21,7 +19,7 @@ void socketReader::run() {
             short messageOpCode = bytesToShort(message);
             cout << "ERROR " << messageOpCode << std::endl;
             if (messageOpCode == 3) {
-                mutex.unlock();
+                //mutex.unlock();
                 sleep(1);
             }
         }
@@ -35,7 +33,7 @@ void socketReader::run() {
                 cout << optional << std::endl;
             if (messageOpCode == 4) {
                 *shouldTerminate = true;
-                mutex.unlock();
+                //mutex.unlock();
             }
         }
         else if (opCode == 9)
@@ -57,7 +55,7 @@ void socketReader::run() {
     }
 }
 
-short socketReader::bytesToShort(char* bytesArr)
+short SocketReader::bytesToShort(char* bytesArr)
 {
     short result = (short)((bytesArr[0] & 0xff) << 8);
     result += (short)(bytesArr[1] & 0xff);

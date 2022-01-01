@@ -4,15 +4,13 @@
 #include <mutex>;
 #include "connectionHandler.h";                       
 
-class socketReader{
+class SocketReader{
     private: 
-    int id;
-    std::mutex& mutex;
     ConnectionHandler& cHandler;
     bool* shouldTerminate;
 
     public:
-    socketReader(int id, std::mutex& mutex, ConnectionHandler& cHandler, bool* shouldTerminate);
+    SocketReader(ConnectionHandler& cHandler, bool* shouldTerminate);
     void run();
     short bytesToShort(char* bytesArr);
 };
