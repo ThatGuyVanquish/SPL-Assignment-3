@@ -9,7 +9,7 @@ public class ConnectionsImpl<T> implements Connections<T> {
 
     private ConnectionsImpl() {
         this.clientMap = new ConcurrentHashMap<>();
-        this.currentId = new AtomicInteger(0);
+      
     }
 
     private static class singletonHolder {
@@ -42,8 +42,8 @@ public class ConnectionsImpl<T> implements Connections<T> {
         this.clientMap.remove(connectionId);
     }
     
-    public void connect(ConnectionHandler cHandler) {
-        this.clientMap.put(this.currentId.getAndIncrement(), cHandler);
+    public void connect(int id,ConnectionHandler cHandler) {
+        this.clientMap.put(id, cHandler);
     }
 
 }

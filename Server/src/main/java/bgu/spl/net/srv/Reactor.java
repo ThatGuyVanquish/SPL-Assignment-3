@@ -11,16 +11,18 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public class Reactor<T> implements Server<T> {
 
     private final int port;
-    private final Supplier<MessagingProtocol<T>> protocolFactory;
+    private final Supplier<BidiMessagingProtocol<T>> protocolFactory;
     private final Supplier<MessageEncoderDecoder<T>> readerFactory;
     private final ActorThreadPool pool;
     private Selector selector;
-    private static final ConnectionsImpl CONNECTIONS = ConnectionsImpl.getInstance();
+    private static final  ConnectionsImpl CONNECTIONS = ConnectionsImpl.getInstance();
+    private AtomicInteger id;
 
     private Thread selectorThread;
     private final ConcurrentLinkedQueue<Runnable> selectorTasks = new ConcurrentLinkedQueue<>();
@@ -28,9 +30,10 @@ public class Reactor<T> implements Server<T> {
     public Reactor(
             int numThreads,
             int port,
-            Supplier<MessagingProtocol<T>> protocolFactory,
+            Supplier<BidiMessagingProtocol<T>> protocolFactory,
             Supplier<MessageEncoderDecoder<T>> readerFactory) {
-
+        
+        id = new AtomicInteger(0);
         this.pool = new ActorThreadPool(numThreads);
         this.port = port;
         this.protocolFactory = protocolFactory;
@@ -102,8 +105,10 @@ public class Reactor<T> implements Server<T> {
                 protocolFactory.get(),
                 clientChan,
                 this);
+        CONNECTIONS.connect(id.incrementAndGet(),handler);
+        handler.start(id.get(),CONNECTIONS);
         clientChan.register(selector, SelectionKey.OP_READ, handler);
-        CONNECTIONS.connect(handler);
+        
     }
 
     private void handleReadWrite(SelectionKey key) {
