@@ -118,7 +118,7 @@ public class NonBlockingConnectionHandler<T> implements ConnectionHandler<T> {
 
     @Override
     public void send(T msg) {
-        // TODO Auto-generated method stub
+        writeQueue
         
     }
 
