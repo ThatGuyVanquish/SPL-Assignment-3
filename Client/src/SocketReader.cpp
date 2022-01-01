@@ -1,5 +1,6 @@
 #include "../include/SocketReader.h"
-#include <mutex>
+#include <boost/algorithm/string.hpp>
+#include "boost/lexical_cast.hpp"
 using namespace std;
 
 
@@ -12,28 +13,22 @@ void SocketReader::run() {
     while (!(*shouldTerminate)) {
         //mutex.try_lock();
         char message[2];
-        cHandler.getBytes(message, 2);
+        cHandler.getBytes(message, 2); // Receives Server to Client message op-code
         short opCode = bytesToShort(message);
         if (opCode == 11) {
-            cHandler.getBytes(message, 2);
+            cHandler.getBytes(message, 2); // Receives Client to Server message op-code (the one for which this message was received)
             short messageOpCode = bytesToShort(message);
-            cout << "ERROR " << messageOpCode << std::endl;
-            if (messageOpCode == 3) {
-                //mutex.unlock();
-                sleep(1);
-            }
+            cout << "ERROR " << messageOpCode << endl;
         }
         else if (opCode == 10){
-            cHandler.getBytes(message, 2);
+            cHandler.getBytes(message, 2); // Receives Client to Server message op-code (the one for which this message was received)
             short messageOpCode = bytesToShort(message);
-            cout << "ACK " << messageOpCode << std::endl;
-            string optional;
-            cHandler.getLine(optional);
-            if (optional != "")
-                cout << optional << std::endl;
-            if (messageOpCode == 4) {
+            cout << "ACK " << messageOpCode;
+            std::string optional;
+            if (cHandler.getLine(optional))
+                cout << optional << endl;
+            if (messageOpCode == 3) {
                 *shouldTerminate = true;
-                //mutex.unlock();
             }
         }
         else if (opCode == 9)
@@ -47,10 +42,13 @@ void SocketReader::run() {
             }
             else 
             {
-                notiType = "POST";
+                notiType = "Public";
             }
-
-            //cout << "NOTIFICATION " + notiType + " "
+            std::vector<std::string> splitMessage;
+            std::string message;
+            cHandler.getLine(message);
+            boost::split(splitMessage, message, boost::is_any_of('\0'));
+            cout<< "NOTIFICATION " << notiType + " " << "@" + splitMessage[0] + " " + splitMessage[1]<<endl;
         }
     }
 }

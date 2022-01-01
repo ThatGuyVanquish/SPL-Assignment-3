@@ -64,11 +64,11 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
 }
  
 bool ConnectionHandler::getLine(std::string& line) {
-    return getFrameAscii(line, '\0'); // Changed from '\n' to '\0' because we use 0 byte rather than new line
+    return getFrameAscii(line, ';'); // Changed from '\n' to '\0' because we use 0 byte rather than new line
 }
 
 bool ConnectionHandler::sendLine(std::string& line) {
-    return sendFrameAscii(line, '\0'); // Changed from '\n' to '\0' because we use 0 byte rather than new line
+    return sendFrameAscii(line, ';'); // Changed from '\n' to '\0' because we use 0 byte rather than new line
 }
  
 bool ConnectionHandler::getFrameAscii(std::string& frame, char delimiter) {
