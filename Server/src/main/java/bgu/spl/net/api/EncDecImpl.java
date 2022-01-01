@@ -7,7 +7,7 @@ public class EncDecImpl implements MessageEncoderDecoder<String> {
     private LinkedList<Byte> byteList;
 
     public EncDecImpl() {
-        this.byteList = new LinkedList<Byte>();
+        this.byteList = new LinkedList<>();
     }
 
     @Override
@@ -15,6 +15,7 @@ public class EncDecImpl implements MessageEncoderDecoder<String> {
         if (nextByte == ';') {
             byte[] byteArr = objectsToBytes(this.byteList.toArray());
             String ret = new String(byteArr);
+            this.byteList = new LinkedList<>();
             return ret;
         }
         this.byteList.add(nextByte);

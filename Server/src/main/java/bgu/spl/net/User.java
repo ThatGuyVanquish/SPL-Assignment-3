@@ -5,7 +5,6 @@ import java.util.Vector;
 
 public class User {
     
-    private int userId;
     private String username;
     private String password;
     private String birthday;
@@ -15,8 +14,7 @@ public class User {
     private boolean loginStatus;
     private int numOfPosts;
     
-    public User(int userId, String username, String password, String birthday) {
-        this.userId = userId;
+    public User( String username, String password, String birthday) {
         this.username = username;
         this.password = password;
         this.birthday = birthday;

@@ -7,9 +7,10 @@ import bgu.spl.net.srv.ConnectionHandler;
 
 public class ConnectionsImpl<T> implements Connections<T> {
 
+    private ConcurrentHashMap<Integer, ConnectionHandler<T>> clientMap;
+
     private ConnectionsImpl() {
         this.clientMap = new ConcurrentHashMap<>();
-      
     }
 
     private static class singletonHolder {
@@ -19,9 +20,6 @@ public class ConnectionsImpl<T> implements Connections<T> {
     public static ConnectionsImpl getInstance() {
         return singletonHolder.instance;
     }
-
-    private ConcurrentHashMap<Integer, ConnectionHandler<T>> clientMap;
-    private AtomicInteger currentId;
 
     @Override
     public boolean send(int connectionId, T msg) {
