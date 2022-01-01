@@ -1,6 +1,7 @@
 package bgu.spl.net.api.BiDi;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import bgu.spl.net.srv.ConnectionHandler;
 
@@ -8,6 +9,7 @@ public class ConnectionsImpl<T> implements Connections<T> {
 
     private ConnectionsImpl() {
         this.clientMap = new ConcurrentHashMap<>();
+        this.currentId = new AtomicInteger(0);
     }
 
     private static class singletonHolder {
@@ -19,6 +21,7 @@ public class ConnectionsImpl<T> implements Connections<T> {
     }
 
     private ConcurrentHashMap<Integer, ConnectionHandler<T>> clientMap;
+    private AtomicInteger currentId;
 
     @Override
     public boolean send(int connectionId, T msg) {
@@ -39,4 +42,8 @@ public class ConnectionsImpl<T> implements Connections<T> {
         this.clientMap.remove(connectionId);
     }
     
+    public void connect(ConnectionHandler cHandler) {
+        this.clientMap.put(this.currentId.getAndIncrement(), cHandler);
+    }
+
 }
