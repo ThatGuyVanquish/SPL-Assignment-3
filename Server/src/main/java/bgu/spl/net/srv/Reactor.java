@@ -19,6 +19,7 @@ public class Reactor<T> implements Server<T> {
     private final Supplier<MessageEncoderDecoder<T>> readerFactory;
     private final ActorThreadPool pool;
     private Selector selector;
+    private static final ConnectionsImpl CONNECTIONS = ConnectionsImpl.getInstance();
 
     private Thread selectorThread;
     private final ConcurrentLinkedQueue<Runnable> selectorTasks = new ConcurrentLinkedQueue<>();
@@ -101,6 +102,7 @@ public class Reactor<T> implements Server<T> {
                 clientChan,
                 this);
         clientChan.register(selector, SelectionKey.OP_READ, handler);
+        CONNECTIONS.connect(handler);
     }
 
     private void handleReadWrite(SelectionKey key) {
