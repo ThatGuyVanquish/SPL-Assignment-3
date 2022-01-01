@@ -25,32 +25,38 @@ void ConsoleReader::run()
         char opCode[2];
         if (msg[0] == "REGISTER")
         {
-            message = "1" + '\0' + msg[1] + '\0' + msg[2] + '\0' + msg[3] + ';';
+            shortToBytes(1, opCode);
+            message = msg[1] + '\0' + msg[2] + '\0' + msg[3] + ";\0";
         }
         else if (msg[0] == "LOGIN")
         {
-            message = "2" + '\0' + msg[1] + '\0' + msg[2] + '\0' + "1" + ';';
+            shortToBytes(2, opCode);
+            message = msg[1] + '\0' + msg[2] + '\0' + "1\0";
         }
         else if (msg[0] == "LOGOUT")
         {
-            message = "3" + ';';
+            shortToBytes(3, opCode);
+            message = ';\0';
         }
         else if (msg[0] == "FOLLOW")
         {
-            message = "4" + '\0' + msg[1] + '\0' + msg[2] + ';';
+            shortToBytes(4, opCode);
+            message = msg[1] + '\0' + msg[2] + ";\0";
         }
         else if (msg[0] == "POST")
         {
-            message = "5" + '\0';
+            shortToBytes(5, opCode);
+            message = "";
             for (int i = 1; i < msg.size() - 1; i++) 
             {
                 message.append(msg[i] + '\0');
             }
-            message.append(msg[msg.size()-1] + ';');
+            message.append(msg[msg.size()-1] + ";\0");
         }
         else if (msg[0] == "PM")
         {
-            message = "6" + '\0' + msg[1] + '\0';
+            shortToBytes(6, opCode);
+            message = msg[1] + '\0';
             for (int i = 1; i < msg.size(); i++) 
             {
                 message.append(msg[i] + '\0');
@@ -62,26 +68,30 @@ void ConsoleReader::run()
             timeinfo = localtime(&rawtime);
             strftime(buffer,sizeof(buffer),"%d-%m-%Y %H:%M",timeinfo);
             std::string str(buffer);
-            message.append(str + ';');
+            message.append(str + ";\0");
         }
         else if (msg[0] == "LOGSTAT")
         {
-            message = "7;";
+            shortToBytes(7, opCode);
+            message = ";\0";
         }
         else if (msg[0] == "STAT")
         {
-            message = "8" + '\0';
+            shortToBytes(8, opCode);
+            message = "";
             for (int i = 1; i < msg.size() - 1; i++) 
             {
                 message.append(msg[i] + '|');
             }
-            message.append(msg[msg.size() - 1] + ';');
+            message.append(msg[msg.size() - 1] + ";\0");
         }
         else if (msg[0] == "BLOCK")
         {
-            message = "12" + '\0' + msg[1] + ';';
+            shortToBytes(12, opCode);
+            message = msg[1] + ";\0";
         }
-        cHandler.sendLine(message);
+        this -> cHandler.sendBytes(opCode, 2);
+        this -> cHandler.sendLine(message);
     }
 }
 
