@@ -11,21 +11,21 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
     private ConcurrentHashMap<Integer, User> userMap;
     private ConcurrentHashMap<String, User> usernameMap;
 
-    private Connections connectionsImpl;
+    private Connections connections;
     private int connectionId;
     private User user;
 
     @Override
     public void start(int connectionId, Connections connections) {
-        this.connectionsImpl = connections;
+        this.connections = connections;
         this.connectionId = connectionId;
+        this.user = null;
     }
 
     @Override
     public void process(String message) {
         String[] msg = message.split("\0");
-        int opCode = Integer.parseInt(msg[0].substring(0,2));
-        msg[0] = msg[0].substring(2);
+        int opCode = Integer.parseInt(msg[0]);
         if (opCode == 1) { // Register
             String username = msg[0];
             if (usernameMap.get(username) == null) {
@@ -34,13 +34,16 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             }
         }
         else if (opCode == 2) { // Login
+            if (this.user != null) {
+                this.connections.send(this.connectionId, "11 2");
+            }
 
         }
         else if (opCode == 3) { // Logout
-
+            // check if user exists in the user database, if not send error
         }
         else if (opCode == 4) { // Follow/Unfollow
-
+            
         }
         else if (opCode == 5) { // Post
 
