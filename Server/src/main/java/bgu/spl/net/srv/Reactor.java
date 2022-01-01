@@ -21,7 +21,7 @@ public class Reactor<T> implements Server<T> {
     private final Supplier<MessageEncoderDecoder<T>> readerFactory;
     private final ActorThreadPool pool;
     private Selector selector;
-    private static final  ConnectionsImpl CONNECTIONS = ConnectionsImpl.getInstance();
+    private static final ConnectionsImpl CONNECTIONS = ConnectionsImpl.getInstance();
     private AtomicInteger id;
 
     private Thread selectorThread;
