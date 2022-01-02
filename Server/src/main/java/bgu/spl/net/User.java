@@ -1,18 +1,21 @@
 package bgu.spl.net;
 
-import java.sql.Time;
+import java.util.HashMap;
 import java.util.Vector;
 
 public class User {
     
+    private Database DATABASE = Database.getInstance();
     private String username;
     private String password;
     private String birthday;
     private Vector<User> followingList;
     private Vector<User> followersList;
     private Vector<User> blockList;
+    private Vector<User> blockedBy;
     private boolean loginStatus;
-    private int numOfPosts;
+    private Vector<String> posts;
+    private HashMap<User, String> pms;
     
     public User( String username, String password, String birthday) {
         this.username = username;
@@ -21,36 +24,49 @@ public class User {
         this.followingList = new Vector<>();
         this.followersList = new Vector<>();
         this.blockList = new Vector<>();
+        this.blockedBy = new Vector<>();
         this.loginStatus = false;
-        this.numOfPosts = 0;
+        this.posts = new Vector<>();
+        this.pms = new HashMap<>();
     }   
 
-    public void login(String username, String password) {
-        if (username.equals(this.username) && password.equals(this.password)) loginStatus = true;
-        // send an ACK message to acknowledge login success
+    public boolean login(String username, String password) {
+        if (username.equals(this.username) && password.equals(this.password)) {
+            this.loginStatus = true;
+            return true;
+        }
+        return false;
     }
 
-    public void logout() {
-        // Shouldn't exist here as user is going to be deleted anyway, whenever it is called server should just 
-        // delete the user from the hashmap in Connections 
+    public boolean logout() {
+        if (this.isOnline()) {
+            this.loginStatus = false;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isOnline() {
+        return this.loginStatus;
+    }
+
+    public String getUsername() {
+        return this.username;
     }
 
     /**
      * Adds a user to this user's following list
      * 
      * @param username username of the person to follow
-     * @pre ConnectionsImpl.clientMap.includes(username)
-     * ^ meaning a user should exist before calling this
      */
-    public void follow(User username) {
+    public boolean follow(User username) {
+        if (!DATABASE.isRegistered(username.getUsername())) return false;
         if (this.followingList.indexOf(username) == -1){
             this.followingList.add(username);
             username.followedBy(this);
-            // send ack message of successfull follow
+            return true;
         }
-        else {
-            // send error message of unsuccessfull follow
-        }
+        return false;
     }
 
     /**
@@ -58,34 +74,52 @@ public class User {
      * If user doesn't exist in the following list it should do nothing
      * 
      * @param username username of the person to follow
-     * @pre ConnectionsImpl.clientMap.includes(username)
-     * ^ meaning a user should exist before calling this
-     *
      */
-    public void unfollow(User username, boolean blockReq) {
+    public boolean unfollow(User username, boolean blockReq) {
+        if (!DATABASE.isRegistered(username.getUsername())) return false;
         if (this.followersList.indexOf(username) != -1) {
             this.followingList.remove(username);
             username.unfollowedBy(this);
-            // send ack message of successfull unfollow if not blockReq
+            return true;
         }
-        else {
-            // send error message of unsuccessfull unfollow if not blockReq
-        }
+        return false;
     }
 
+    /**
+     * Method to add a User to another User's Followers List
+     * @param username user that followed @this
+     * @pre DATABASE.isRegistered(this)
+     */
     public void followedBy(User username) {
         this.followersList.add(username);
     }
 
+    /**
+     * Method to remove a User from another User's Followers List
+     * @param username user that unfollowed @this
+     * @pre DATABASE.isRegistered(this)
+     */
     public void unfollowedBy(User username) {
         this.followersList.remove(username);
     }
 
-    public void block(User username) {
+
+    public boolean block(User username) {
+        if (!DATABASE.isRegistered(username.getUsername())) return false;
         this.unfollow(username, true);
         username.unfollow(this, true);
         this.blockList.add(username);
-        // send ack message to acknowledge successfull block
+        username.getBlocked(this);
+        return true;
+    }
+
+    /**
+     * Method to add a User to another User's Blockers List
+     * @param username user that blocked @this
+     * @pre DATABASE.isRegistered(this)
+     */
+    public void getBlocked(User username) {
+        this.blockedBy.add(username);
     }
 
     public double getAge() {
@@ -98,12 +132,25 @@ public class User {
         return age;
     }
 
-    public void post() { // Don't know if this should be more elaborate
-        this.numOfPosts++;
+    public boolean post(String post) {
+        if (this.isOnline()) {
+            this.posts.add(post);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean pm(User user, String pm) {
+        if (!DATABASE.isRegistered(user.getUsername())) return false;
+        if (this.isOnline()){
+            this.pms.put(user, pm);
+            return true;
+        }
+        return false;
     }
 
     public String getStats() {
-        return this.getAge() + " " + this.numOfPosts + " " + this.followersList.size() + " " + this.followingList.size();
+        return this.getAge() + " " + this.posts.size() + " " + this.followersList.size() + " " + this.followingList.size();
     }
 
 }

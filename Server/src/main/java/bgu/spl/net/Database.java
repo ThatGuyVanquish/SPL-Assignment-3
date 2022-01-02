@@ -13,7 +13,7 @@ public class Database {
         private static final Database instance = new Database();
     }
 
-    public Database getInstance() {
+    public static Database getInstance() {
         return singletonHolder.instance;
     }
 
