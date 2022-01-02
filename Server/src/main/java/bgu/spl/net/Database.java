@@ -30,4 +30,14 @@ public class Database {
     public boolean isRegistered(String username) {
         return (registeredUsers.get(username) != null);
     }
+
+    public User getUser(String username) {
+        return this.registeredUsers.get(username);
+    }
+
+    public void removeClient(int connectionId) {
+        ConnectionHandler toRemove = this.cHandlerMap.get(connectionId);
+        this.userMap.remove(toRemove);
+        this.cHandlerMap.remove(connectionId);
+    }
 }

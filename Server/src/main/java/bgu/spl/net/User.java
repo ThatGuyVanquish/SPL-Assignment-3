@@ -75,7 +75,7 @@ public class User {
      * 
      * @param username username of the person to follow
      */
-    public boolean unfollow(User username, boolean blockReq) {
+    public boolean unfollow(User username) {
         if (!DATABASE.isRegistered(username.getUsername())) return false;
         if (this.followersList.indexOf(username) != -1) {
             this.followingList.remove(username);
@@ -103,11 +103,10 @@ public class User {
         this.followersList.remove(username);
     }
 
-
     public boolean block(User username) {
         if (!DATABASE.isRegistered(username.getUsername())) return false;
-        this.unfollow(username, true);
-        username.unfollow(this, true);
+        this.unfollow(username);
+        username.unfollow(this);
         this.blockList.add(username);
         username.getBlocked(this);
         return true;
