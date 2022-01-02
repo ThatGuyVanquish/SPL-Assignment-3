@@ -127,7 +127,7 @@ public class User {
     }
 
     public boolean block(User username) {
-        if (!DATABASE.isRegistered(username.getUsername())) return false;
+        if (!DATABASE.isRegistered(username.getUsername()) || this.blockList.contains(username)) return false;
         this.unfollow(username);
         username.unfollow(this);
         this.blockList.add(username);

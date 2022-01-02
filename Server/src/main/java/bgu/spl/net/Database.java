@@ -38,6 +38,10 @@ public class Database {
         return this.registeredUsers.get(username);
     }
 
+    public Vector<User> getUsers() {
+        return (Vector<User>) this.registeredUsers.values();
+    }
+
     public String filterString(String msg) {
         for (String str : restrictedWords) {
             msg.replaceAll(str, "<filtered>");

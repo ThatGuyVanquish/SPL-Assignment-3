@@ -120,7 +120,7 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
         }
         else if (opCode == 8) { // Stat
             if(this.user == null)
-                this.connections.send(this.connectionId, "11 7;");
+                this.connections.send(this.connectionId, "11 8;");
             else{
                 String[] users = msg[1].split("|");
                 for (String user : users) {
@@ -129,7 +129,16 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             } 
         }
         else if (opCode == 12) { // Block
-            
+            if(this.user == null)
+                this.connections.send(this.connectionId, "11 12;");
+            else{
+                if (this.user.block(DATABASE.getUser(msg[1]))) {
+                    this.connections.send(this.connectionId, "10 12 " + msg[1] + ";");
+                }
+                else {
+                    this.connections.send(this.connectionId, "11 12;");
+                }
+            }
         }
     }
 
