@@ -15,7 +15,7 @@ public class User {
     private Vector<User> blockedBy;
     private boolean loginStatus;
     private Vector<String> posts;
-    private HashMap<User, String> pms;
+    private HashMap<User, Vector<String>> pms;
     
     public User( String username, String password, String birthday) {
         this.username = username;
@@ -142,8 +142,15 @@ public class User {
     public boolean pm(User user, String pm) {
         if (!DATABASE.isRegistered(user.getUsername())) return false;
         if (this.isOnline()){
-            this.pms.put(user, pm);
-            return true;
+            if (this.followingList.indexOf(user) == -1) return false;
+            else {
+                if (this.pms.keySet().contains(user)) this.pms.get(user).add(pm);
+                else {
+                    this.pms.put(user, new Vector<String>());
+                    this.pms.get(user).add(pm);
+                }
+                return true;
+            }
         }
         return false;
     }

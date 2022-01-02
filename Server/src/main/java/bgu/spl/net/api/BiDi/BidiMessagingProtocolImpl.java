@@ -106,7 +106,6 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
 
     @Override
     public boolean shouldTerminate() {
-        // TODO Auto-generated method stub
         return false;
     }
     
