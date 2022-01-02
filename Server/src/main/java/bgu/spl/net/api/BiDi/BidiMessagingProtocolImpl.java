@@ -13,12 +13,14 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
     private int connectionId;
     private static final Database DATABASE = Database.getInstance();
     private User user;
+    private boolean shouldTerminate;
 
     @Override
     public void start(int connectionId, Connections connections) {
         this.connections = connections;
         this.connectionId = connectionId;
         this.user = null;
+        this.shouldTerminate = false;
     }
 
     @Override
@@ -30,6 +32,7 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             if (!DATABASE.isRegistered(username)) {
                 User newUser = new User(username, msg[1], msg[2]);
                 DATABASE.register(username, newUser);
+                this.connections.send(this.connectionId, "10 1");
             }
             else this.connections.send(this.connectionId, "11 1"); // Send an error to the client
         }
@@ -44,6 +47,7 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             }
             else {
                 this.connections.send(this.connectionId, " 10 2");
+                this.user = DATABASE.getUser(username);
             }
             
         }
@@ -54,7 +58,7 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             else {
                 this.user.logout();
                 this.connections.send(this.connectionId, "10 3");
-                DATABASE.removeClient(this.connectionId);
+                this.shouldTerminate = true;
             }
         }
         else if (opCode == 4) { // Follow/Unfollow
@@ -84,8 +88,8 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             else {
                 String[] post = msg[1].split(" ");
                 for (String str : post) {
-                    if (str.indexOf('@') != -1) {
-
+                    if (str.indexOf('@') == 0) {
+                        //should send it to the relevant connection handler
                     }
                 }
             }
@@ -106,7 +110,9 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
 
     @Override
     public boolean shouldTerminate() {
-        return false;
+        if (this.shouldTerminate != false)
+            DATABASE.removeClient(this.connectionId);
+        return this.shouldTerminate;
     }
     
 }

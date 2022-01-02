@@ -140,6 +140,7 @@ public class User {
     }
 
     public boolean pm(User user, String pm) {
+        pm = DATABASE.filterString(pm);
         if (!DATABASE.isRegistered(user.getUsername())) return false;
         if (this.isOnline()){
             if (this.followingList.indexOf(user) == -1) return false;
