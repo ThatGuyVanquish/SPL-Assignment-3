@@ -6,6 +6,7 @@ import java.util.Vector;
 public class User {
     
     private Database DATABASE = Database.getInstance();
+    private int connecionId;
     private String username;
     private String password;
     private String birthday;
@@ -17,10 +18,11 @@ public class User {
     private Vector<String> posts;
     private HashMap<User, Vector<String>> pms;
     
-    public User( String username, String password, String birthday) {
+    public User( String username, String password, String birthday, int connectionId) {
         this.username = username;
         this.password = password;
         this.birthday = birthday;
+        this.connecionId = connectionId;
         this.followingList = new Vector<>();
         this.followersList = new Vector<>();
         this.blockList = new Vector<>();
@@ -31,6 +33,7 @@ public class User {
     }   
 
     public boolean login(String username, String password) {
+        if (this.isOnline()) return false;
         if (username.equals(this.username) && password.equals(this.password)) {
             this.loginStatus = true;
             return true;
@@ -38,9 +41,18 @@ public class User {
         return false;
     }
 
+    public void setConId(int i) {
+        this.connecionId = i;
+    }
+
+    public int getConId() {
+        return this.connecionId;
+    }
+
     public boolean logout() {
         if (this.isOnline()) {
             this.loginStatus = false;
+            this.connecionId = -1;
             return true;
         }
         return false;
@@ -61,7 +73,7 @@ public class User {
      */
     public boolean follow(User username) {
         if (!DATABASE.isRegistered(username.getUsername())) return false;
-        if (this.followingList.indexOf(username) == -1){
+        if (this.followingList.indexOf(username) == -1 && this.blockList.indexOf(username) == -1 && this.blockedBy.indexOf(username) == -1){
             this.followingList.add(username);
             username.followedBy(this);
             return true;
@@ -92,6 +104,17 @@ public class User {
      */
     public void followedBy(User username) {
         this.followersList.add(username);
+    }
+
+    public boolean hasFollower(User username) {
+        for (User user : this.followersList) {
+            if (user == username) return true;
+        }
+        return false;
+    }
+
+    public Vector<User> getFollowers() {
+        return this.followersList;
     }
 
     /**
@@ -139,21 +162,14 @@ public class User {
         return false;
     }
 
-    public boolean pm(User user, String pm) {
+    public String pm(User user, String pm, String time) {
         pm = DATABASE.filterString(pm);
-        if (!DATABASE.isRegistered(user.getUsername())) return false;
-        if (this.isOnline()){
-            if (this.followingList.indexOf(user) == -1) return false;
-            else {
-                if (this.pms.keySet().contains(user)) this.pms.get(user).add(pm);
-                else {
-                    this.pms.put(user, new Vector<String>());
-                    this.pms.get(user).add(pm);
-                }
-                return true;
-            }
+        if (this.pms.keySet().contains(user)) this.pms.get(user).add(pm + " " + time);
+        else {  
+            this.pms.put(user, new Vector<String>());
+            this.pms.get(user).add(pm + " " + time);
         }
-        return false;
+        return pm;
     }
 
     public String getStats() {
