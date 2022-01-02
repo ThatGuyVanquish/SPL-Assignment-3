@@ -1,5 +1,6 @@
 package bgu.spl.net;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -148,9 +149,10 @@ public class User {
         int day = Integer.parseInt(this.birthday.substring(0,2));
         int month = Integer.parseInt(this.birthday.substring(3,5));
         int year = Integer.parseInt(this.birthday.substring(6));
-        long millis = System.currentTimeMillis();  
-        java.sql.Date date = new java.sql.Date(millis);
-        double age = date.getYear() - year - (date.getMonth() - month)/12 - (date.getDay() - day)/365;
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        int currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+        int currentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        double age = currentYear - year - (currentMonth - month)/12 - (currentDay - day)/365;
         return age;
     }
 

@@ -4,5 +4,6 @@
         "istream": "cpp",
         "iomanip": "cpp",
         "*.ipp": "cpp"
-    }
+    },
+    "java.configuration.updateBuildConfiguration": "automatic"
 }
