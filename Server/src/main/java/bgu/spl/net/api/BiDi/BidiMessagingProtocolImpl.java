@@ -79,7 +79,16 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             }
         }
         else if (opCode == 5) { // Post
+            if (this.user == null) 
+                this.connections.send(this.connectionId, "11 4");
+            else {
+                String[] post = msg[1].split(" ");
+                for (String str : post) {
+                    if (str.indexOf('@') != -1) {
 
+                    }
+                }
+            }
         }
         else if (opCode == 6) { // PM
 
