@@ -1,5 +1,6 @@
 package bgu.spl.net;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Vector;
@@ -91,8 +92,10 @@ public class User {
      * @param username username of the person to follow
      */
     public boolean unfollow(User username) {
-        if (!DATABASE.isRegistered(username.getUsername())) return false;
-        if (this.followersList.indexOf(username) != -1) {
+        if (!DATABASE.isRegistered(username.getUsername())) {
+            return false;
+        }
+        if (this.followingList.indexOf(username) != -1) {
             this.followingList.remove(username);
             username.unfollowedBy(this);
             return true;
@@ -148,7 +151,6 @@ public class User {
     }
 
     public double getAge() {
-        System.out.println("BIRTHDAY IS " + this.birthday);
         String[] bday = this.birthday.split("-");
         int day = Integer.parseInt(bday[0]);
         int month = Integer.parseInt(bday[1]);

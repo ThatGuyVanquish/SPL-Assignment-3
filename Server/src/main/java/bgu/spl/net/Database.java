@@ -52,7 +52,6 @@ public class Database {
     }
 
     public void removeClient(int connectionId) {
-        ConnectionHandler toRemove = this.cHandlerMap.get(connectionId);
         this.cHandlerMap.remove(connectionId);
     }
 }

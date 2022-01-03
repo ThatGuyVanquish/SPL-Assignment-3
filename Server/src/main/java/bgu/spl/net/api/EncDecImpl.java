@@ -79,7 +79,6 @@ public class EncDecImpl implements MessageEncoderDecoder<String> {
             ret2[i] = ret[i];
         }
         ret2[ret2.length - 1] = ';';
-        System.out.println("byte array is " + Arrays.toString(ret2));
         return ret2;
     }
 

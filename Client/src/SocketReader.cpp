@@ -11,7 +11,6 @@ shouldTerminate(shouldTerminate)
 
 void SocketReader::run() {
     while (!(*shouldTerminate)) {
-        //mutex.try_lock();
         char message[2];
         cHandler.getBytes(message, 2); // Receives Server to Client message op-code
         short opCode = bytesToShort(message);
@@ -19,6 +18,8 @@ void SocketReader::run() {
             cHandler.getBytes(message, 2); // Receives Client to Server message op-code (the one for which this message was received)
             short messageOpCode = bytesToShort(message);
             cout << "ERROR " << messageOpCode << endl;
+            std::string useless;
+            cHandler.getLine(useless);
         }
         else if (opCode == 10){
             cHandler.getBytes(message, 2); // Receives Client to Server message op-code (the one for which this message was received)

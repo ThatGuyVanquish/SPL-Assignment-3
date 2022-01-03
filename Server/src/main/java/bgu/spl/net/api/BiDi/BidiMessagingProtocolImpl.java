@@ -1,6 +1,5 @@
 package bgu.spl.net.api.BiDi;
 
-import java.util.Arrays;
 import java.util.Vector;
 
 import bgu.spl.net.Database;
@@ -78,6 +77,8 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
                 }
             }
             else if (followOpCode == 0) { // Try to unfollow @msg[2]
+                System.out.println("Follow opcode is 0");
+                System.out.println("User to unfollow is " + DATABASE.getUser(msg[2]));
                 if (this.user.unfollow(DATABASE.getUser(msg[2]))) {
                     this.connections.send(this.connectionId, "10 4 " + msg[2]);
                 }
@@ -143,7 +144,6 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
                 this.connections.send(this.connectionId, "11 8");
             else{
                 String[] users = msg[1].split("\\|");
-                System.out.println(Arrays.toString(users));
                 for (String user : users) {
                     this.connections.send(this.connectionId, "10 8 " + DATABASE.getUser(user).getStats());
                 }
