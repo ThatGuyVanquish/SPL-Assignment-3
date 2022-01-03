@@ -1,18 +1,20 @@
 package bgu.spl.net.api.BiDi;
 
+import java.util.Vector;
+
 import bgu.spl.net.Database;
 import bgu.spl.net.User;
 
 public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
 
-    private Connections connections;
+    private Connections<String> connections;
     private int connectionId;
     private static final Database DATABASE = Database.getInstance();
     private User user;
     private boolean shouldTerminate;
 
     @Override
-    public void start(int connectionId, Connections connections) {
+    public void start(int connectionId, Connections<String> connections) {
         this.connections = connections;
         this.connectionId = connectionId;
         this.user = null;
@@ -44,6 +46,12 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
                 this.connections.send(this.connectionId, "10 2;");
                 this.user = DATABASE.getUser(username);
                 this.user.setConId(this.connectionId);
+                while (true) {
+                    String msgToPrint = this.user.getIncomingMsg();
+                    if (msgToPrint != null)
+                        this.connections.send(this.connectionId, msgToPrint);
+                    else break;
+                }
             }
         }
         else if (opCode == 3) { // Logout
@@ -83,15 +91,20 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             else {
                 String[] post = msg[1].split(" ");
                 this.user.post(msg[1]);
+                Vector<User> sendTo = new Vector<>();
                 for (String str : post) {
                     if (str.indexOf('@') == 0) {
                         User atMention = DATABASE.getUser(str.substring(1));
-                        if (!this.user.hasFollower(atMention))
-                            this.connections.send(atMention.getConId(), "9 1 " + this.user.getUsername() + " " + msg[1] + ";");
+                        if (atMention != null && !this.user.hasFollower(atMention))
+                            sendTo.add(atMention);
                     }
                 }
-                for (User user : this.user.getFollowers()) {
-                    this.connections.send(user.getConId(), "9 1 " + this.user.getUsername() + " " + msg[1] + ";");
+                sendTo.addAll(this.user.getFollowers());
+                for (User user : sendTo) {
+                    if (user.isOnline())
+                        this.connections.send(user.getConId(), "9 1 " + this.user.getUsername() + " " + msg[1] + ";");
+                    else
+                        user.incomingMsg("9 1 " + this.user.getUsername() + " " + msg[1] + ";");
                 }
             }
         }
@@ -100,11 +113,15 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
                 this.connections.send(this.connectionId, "11 6;");
             else {
                 String username = msg[1];
-                if (!DATABASE.isRegistered(username) || DATABASE.getUser(username).hasFollower(this.user))
+                User sendTo = DATABASE.getUser(username);
+                if (sendTo == null || sendTo.hasFollower(this.user))
                     this.connections.send(this.connectionId, "11 6;");
                 else {
                     String pmMSG = this.user.pm(DATABASE.getUser(username), msg[2], msg[3]);
-                    this.connections.send(DATABASE.getUser(username).getConId(), "9 0 " + this.user.getUsername() + " " + pmMSG + ";");
+                    if (sendTo.isOnline())
+                        this.connections.send(sendTo.getConId(), "9 0 " + this.user.getUsername() + " " + pmMSG + ";");
+                    else
+                        sendTo.incomingMsg("9 0 " + this.user.getUsername() + " " + pmMSG + ";");
                 }
             }
         }

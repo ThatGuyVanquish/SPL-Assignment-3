@@ -42,7 +42,15 @@ public class EncDecImpl implements MessageEncoderDecoder<String> {
         
         if (opCode == 9) { // Notification
             byte[] opCodeByte = shortToBytes(opCode);
-            
+            byte[] msgType = shortToBytes((short)Integer.parseInt(msg[1]));
+            String msgToSend = message.substring(4);
+            byte[] msgBytes = msgToSend.getBytes();
+            ret = new byte[opCodeByte.length + msgType.length + msgBytes.length];
+            ret[0] = opCodeByte[0]; ret[1] = opCodeByte[1]; ret[2] = msgType[0]; ret[3] = msgType[1];
+            for (int i = 0; i < msgBytes.length; i++) {
+                ret[4 + i] = msgBytes[i];
+            }
+            return ret;
         }
         else if (opCode == 10) { // Acknowledge
             short messageOpCode = (short)Integer.parseInt(msg[1]);

@@ -18,6 +18,7 @@ public class User {
     private boolean loginStatus;
     private Vector<String> posts;
     private HashMap<User, Vector<String>> pms;
+    private Vector<String> incoming;
     
     public User( String username, String password, String birthday, int connectionId) {
         this.username = username;
@@ -31,6 +32,7 @@ public class User {
         this.loginStatus = false;
         this.posts = new Vector<>();
         this.pms = new HashMap<>();
+        this.incoming = new Vector<>();
     }   
 
     public boolean login(String username, String password) {
@@ -176,6 +178,16 @@ public class User {
 
     public String getStats() {
         return this.getAge() + " " + this.posts.size() + " " + this.followersList.size() + " " + this.followingList.size();
+    }
+
+    public void incomingMsg(String str) {
+        this.incoming.add(str);
+    }
+
+    public String getIncomingMsg() {
+        if (!this.incoming.isEmpty())
+            return this.incoming.remove(0);
+        return null;
     }
 
 }
