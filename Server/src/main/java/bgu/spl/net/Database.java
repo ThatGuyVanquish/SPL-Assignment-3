@@ -39,7 +39,9 @@ public class Database {
     }
 
     public Vector<User> getUsers() {
-        return (Vector<User>) this.registeredUsers.values();
+        Vector<User> ret = new Vector<>();
+        for (User user : this.registeredUsers.values()) ret.add(user);
+        return ret;
     }
 
     public String filterString(String msg) {

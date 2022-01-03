@@ -56,27 +56,14 @@ public class EncDecImpl implements MessageEncoderDecoder<String> {
             short messageOpCode = (short)Integer.parseInt(msg[1]);
             byte[] sh1 = shortToBytes(opCode);
             byte[] sh2 = shortToBytes(messageOpCode);
-            byte[] partial = new byte[sh1.length + sh2.length];
-            partial[0] = sh1[0]; partial[1] = sh1[1]; partial[2] = sh2[0]; partial[3] = sh2[1];
-            byte[] optional = null;
-            byte[] accumulative = null;
-            for (int i = 2; i < msg.length; i++) {
-                if (messageOpCode == 4) { 
-                    optional = msg[2].getBytes();
-                }
-                else if (messageOpCode == 7 || messageOpCode == 8) {
-                    optional = shortToBytes((short)Integer.parseInt(msg[i]));
-                }
-                byte[] ac2 = new byte[accumulative.length + optional.length];
-                for (int j = 0; j < accumulative.length; j++) {
-                    ac2[i] = accumulative[i];
-                }
-                for (int j =  accumulative.length; j < accumulative.length + optional.length; j++) {
-                    ac2[j] = optional[j-accumulative.length];
-                }
-                accumulative = ac2;
+            Vector<Byte> byteVector = new Vector<>();
+            byteVector.add(sh1[0]); byteVector.add(sh1[1]); byteVector.add(sh2[0]); byteVector.add(sh2[1]);
+            if (messageOpCode == 4 || messageOpCode == 7 || messageOpCode == 8) { // We have optional info
+                byte[] optional = msg[2].getBytes();
+                for (int i = 0; i < optional.length; i++) 
+                    byteVector.add(optional[i]);
             }
-            ret = accumulative;
+            ret = objectsToBytes(byteVector.toArray());
         }
         else if (opCode == 11) { // Error
             short messageOpCode = (short)Integer.parseInt(msg[1]);
@@ -85,7 +72,12 @@ public class EncDecImpl implements MessageEncoderDecoder<String> {
             ret = new byte[sh1.length + sh2.length];
             ret[0] = sh1[0]; ret[1] = sh1[1]; ret[2] = sh2[0]; ret[3] = sh2[1];
         }
-        return ret;
+        byte[] ret2 = new byte[ret.length + 1];
+        for (int i = 0; i < ret.length; i++) {
+            ret2[i] = ret[i];
+        }
+        ret2[ret2.length - 1] = ';';
+        return ret2;
     }
 
 
