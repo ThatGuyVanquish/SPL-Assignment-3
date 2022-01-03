@@ -1,5 +1,6 @@
 package bgu.spl.net.api;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Vector;
 
@@ -59,7 +60,8 @@ public class EncDecImpl implements MessageEncoderDecoder<String> {
             Vector<Byte> byteVector = new Vector<>();
             byteVector.add(sh1[0]); byteVector.add(sh1[1]); byteVector.add(sh2[0]); byteVector.add(sh2[1]);
             if (messageOpCode == 4 || messageOpCode == 7 || messageOpCode == 8) { // We have optional info
-                byte[] optional = msg[2].getBytes();
+                
+                byte[] optional = message.substring(5).getBytes();
                 for (int i = 0; i < optional.length; i++) 
                     byteVector.add(optional[i]);
             }
@@ -69,14 +71,15 @@ public class EncDecImpl implements MessageEncoderDecoder<String> {
             short messageOpCode = (short)Integer.parseInt(msg[1]);
             byte[] sh1 = shortToBytes(opCode);
             byte[] sh2 = shortToBytes(messageOpCode);
-            ret = new byte[sh1.length + sh2.length];
-            ret[0] = sh1[0]; ret[1] = sh1[1]; ret[2] = sh2[0]; ret[3] = sh2[1];
+            ret = new byte[sh1.length + sh2.length + 1];
+            ret[0] = sh1[0]; ret[1] = sh1[1]; ret[2] = sh2[0]; ret[3] = sh2[1]; ret[4] = " ".getBytes()[0];
         }
         byte[] ret2 = new byte[ret.length + 1];
         for (int i = 0; i < ret.length; i++) {
             ret2[i] = ret[i];
         }
         ret2[ret2.length - 1] = ';';
+        System.out.println("byte array is " + Arrays.toString(ret2));
         return ret2;
     }
 

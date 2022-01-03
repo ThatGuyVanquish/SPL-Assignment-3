@@ -148,9 +148,11 @@ public class User {
     }
 
     public double getAge() {
-        int day = Integer.parseInt(this.birthday.substring(0,2));
-        int month = Integer.parseInt(this.birthday.substring(3,5));
-        int year = Integer.parseInt(this.birthday.substring(6));
+        System.out.println("BIRTHDAY IS " + this.birthday);
+        String[] bday = this.birthday.split("-");
+        int day = Integer.parseInt(bday[0]);
+        int month = Integer.parseInt(bday[1]);
+        int year = Integer.parseInt(bday[2]);
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         int currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
         int currentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);

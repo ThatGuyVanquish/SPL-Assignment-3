@@ -1,5 +1,6 @@
 package bgu.spl.net.api.BiDi;
 
+import java.util.Arrays;
 import java.util.Vector;
 
 import bgu.spl.net.Database;
@@ -28,7 +29,7 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
         if (opCode == 1) { // Register
             String username = msg[1]; // need to check this actually works as intended
             if (!DATABASE.isRegistered(username)) {
-                User newUser = new User(username, msg[1], msg[2], -1);
+                User newUser = new User(username, msg[2], msg[3], -1);
                 DATABASE.register(username, newUser);
                 this.connections.send(this.connectionId, "10 1");
             }
@@ -39,7 +40,7 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             if (this.user != null) { // This client already has a logged in user
                 this.connections.send(this.connectionId, "11 2");
             }
-            if (!DATABASE.isRegistered(username) || !DATABASE.getUser(username).login(username, msg[2]) || msg[3] == "0") { // Login failed because of an incorrect username or password
+            if (!DATABASE.isRegistered(username) || !DATABASE.getUser(username).login(username, msg[2]) || msg[3] == "0") { // Login failed because of an incorrect username or password        
                 this.connections.send(this.connectionId, "11 2");
             }
             else {
@@ -130,8 +131,10 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
                 this.connections.send(this.connectionId, "11 7");
             else{
                 for (User user : DATABASE.getUsers()) {
-                    if (user.isOnline())
+                    if (user.isOnline()) {
+                        System.out.println(user.getStats());
                         this.connections.send(this.connectionId, "10 7 " + user.getStats());
+                    }
                 }
             } 
         }
@@ -139,7 +142,8 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             if(this.user == null)
                 this.connections.send(this.connectionId, "11 8");
             else{
-                String[] users = msg[1].split("|");
+                String[] users = msg[1].split("\\|");
+                System.out.println(Arrays.toString(users));
                 for (String user : users) {
                     this.connections.send(this.connectionId, "10 8 " + DATABASE.getUser(user).getStats());
                 }
