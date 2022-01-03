@@ -59,7 +59,7 @@ void ConsoleReader::run()
             message = msg[1] + '\0';
             for (int i = 1; i < static_cast<int>(msg.size()); i++) 
             {
-                message.append(msg[i] + '\0');
+                message.append(msg[i] + ' ');
             }
             time_t rawtime;
             struct tm * timeinfo;

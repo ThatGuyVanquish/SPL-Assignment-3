@@ -1,5 +1,6 @@
 package bgu.spl.net.api.BiDi;
 
+import java.util.Arrays;
 import java.util.Vector;
 
 import bgu.spl.net.Database;
@@ -39,7 +40,7 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             if (this.user != null) { // This client already has a logged in user
                 this.connections.send(this.connectionId, "11 2");
             }
-            if (!DATABASE.isRegistered(username) || !DATABASE.getUser(username).login(username, msg[2]) || msg[3] == "0") { // Login failed because of an incorrect username or password        
+          else if (!DATABASE.isRegistered(username) || !DATABASE.getUser(username).login(username, msg[2]) || msg[3] == "0") { // Login failed because of an incorrect username or password        
                 this.connections.send(this.connectionId, "11 2");
             }
             else {
@@ -93,9 +94,12 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             else {
                 String[] post = msg[1].split(" ");
                 this.user.post(msg[1]);
+                System.out.println(msg[1]);
+                System.out.println(Arrays.toString(msg));
                 Vector<User> sendTo = new Vector<>();
                 for (String str : post) {
                     if (str.indexOf('@') == 0) {
+                        System.out.print("tetst");
                         User atMention = DATABASE.getUser(str.substring(1));
                         if (atMention != null && !this.user.hasFollower(atMention))
                             sendTo.add(atMention);
@@ -108,6 +112,7 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
                     else
                         user.incomingMsg("9 1 " + this.user.getUsername() + " " + msg[1]);
                 }
+                this.connections.send(this.connectionId, "10 5");
             }
         }
         else if (opCode == 6) { // PM

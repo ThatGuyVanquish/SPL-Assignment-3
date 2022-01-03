@@ -23,9 +23,9 @@ int main (int argc, char *argv[]) {
     bool* shouldTerminate = new bool(false);
     ConsoleReader crTask(connectionHandler, shouldTerminate);
     SocketReader srTask(connectionHandler, shouldTerminate);
-
-    thread crThread(&ConsoleReader::run, &crTask);
     thread srThread(&SocketReader::run, &srTask);
+    thread crThread(&ConsoleReader::run, &crTask);
+    
 
     crThread.join();
     srThread.join();
