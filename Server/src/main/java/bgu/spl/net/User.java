@@ -36,8 +36,9 @@ public class User {
         this.incoming = new Vector<>();
     }   
 
-    public boolean login(String username, String password) {
+    public boolean login(String username, String password, String captcha) {
         if (this.isOnline()) return false;
+        if (captcha.equals("0")) return false;
         if (username.equals(this.username) && password.equals(this.password)) {
             this.loginStatus = true;
             return true;

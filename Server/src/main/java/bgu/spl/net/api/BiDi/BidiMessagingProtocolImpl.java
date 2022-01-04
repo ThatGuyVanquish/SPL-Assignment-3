@@ -40,7 +40,7 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             if (this.user != null) { // This client already has a logged in user
                 this.connections.send(this.connectionId, "11 2");
             }
-          else if (!DATABASE.isRegistered(username) || !DATABASE.getUser(username).login(username, msg[2]) || msg[3] == "0") { // Login failed because of an incorrect username or password        
+            else if (!DATABASE.isRegistered(username) || !DATABASE.getUser(username).login(username, msg[2], msg[3])) { // Login failed because of an incorrect username or password        
                 this.connections.send(this.connectionId, "11 2");
             }
             else {
