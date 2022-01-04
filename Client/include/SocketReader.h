@@ -7,9 +7,9 @@ class SocketReader{
     private: 
     ConnectionHandler& cHandler;
     bool* shouldTerminate;
-
+    bool* ready;
     public:
-    SocketReader(ConnectionHandler& cHandler, bool* shouldTerminate);
+    SocketReader(ConnectionHandler& cHandler, bool* shouldTerminate,bool* ready);
     void run();
     short bytesToShort(char* bytesArr);
 };

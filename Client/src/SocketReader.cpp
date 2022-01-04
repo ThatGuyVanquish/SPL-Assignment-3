@@ -4,14 +4,16 @@
 using namespace std;
 
 
-SocketReader::SocketReader(ConnectionHandler &handler, bool* shouldTerminate): 
+SocketReader::SocketReader(ConnectionHandler &handler, bool* shouldTerminate,bool* ready): 
 cHandler(handler), 
-shouldTerminate(shouldTerminate)
+shouldTerminate(shouldTerminate),
+ready(ready)
 {};
 
 void SocketReader::run() {
     while (!(*shouldTerminate)) {
         char message[2];
+        
         cHandler.getBytes(message, 2); // Receives Server to Client message op-code
         short opCode = bytesToShort(message);
         if (opCode == 11) {
@@ -20,6 +22,7 @@ void SocketReader::run() {
             cout << "ERROR " << messageOpCode << endl;
             std::string useless;
             cHandler.getLine(useless);
+            *ready = true;
         }
         else if (opCode == 10){
             cHandler.getBytes(message, 2); // Receives Client to Server message op-code (the one for which this message was received)
@@ -31,6 +34,8 @@ void SocketReader::run() {
             if (messageOpCode == 3) {
                 cout<<"logout called"<<endl;
                 *shouldTerminate = true;
+                *ready = true;
+                continue;
             }
         }   
         else if (opCode == 9)
@@ -51,6 +56,7 @@ void SocketReader::run() {
             message = message.substr(0,message.length()-1);
             cout<< "NOTIFICATION " << notiType + " " << "@" + message<<endl;
         }
+        
     }
 }
 

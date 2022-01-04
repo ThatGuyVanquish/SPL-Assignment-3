@@ -3,12 +3,14 @@
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 #include "boost/lexical_cast.hpp"
+#include <thread>
 
 using namespace std;
 
-ConsoleReader::ConsoleReader(ConnectionHandler& cHandler, bool* shouldTerminate):
+ConsoleReader::ConsoleReader(ConnectionHandler& cHandler, bool* shouldTerminate,bool* ready):
     cHandler(cHandler), 
-    shouldTerminate(shouldTerminate)
+    shouldTerminate(shouldTerminate),
+    ready(ready)
     {};
 
 void ConsoleReader::run() 
@@ -17,7 +19,7 @@ void ConsoleReader::run()
         std::string message;
         const short bufsize = 1024;
         char buf[bufsize];
-        if (!*shouldTerminate) cin.getline(buf, bufsize);
+        cin.getline(buf, bufsize);
         std::string line(buf);
         std::vector<std::string> msg;
         boost::split(msg, line, boost::is_any_of(" "));
@@ -34,13 +36,21 @@ void ConsoleReader::run()
         }
         else if (msg[0] == "LOGOUT")
         {
+            *ready = false;
             shortToBytes(3, opCode);
             message = '\0';
+            this -> cHandler.sendBytes(opCode, 2);
+            this -> cHandler.sendLine(message);
+            while(!*ready)
+             std::this_thread::yield();
+            *ready = false; 
+            continue;
         }
         else if (msg[0] == "FOLLOW")
         {
             shortToBytes(4, opCode);
             message = msg[1] + '\0' + msg[2] + '\0';
+            
         }
         else if (msg[0] == "POST")
         {

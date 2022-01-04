@@ -46,8 +46,10 @@ public class Database {
 
     public String filterString(String msg) {
         for (String str : restrictedWords) {
-            msg.replaceAll(str, "<filtered>");
+           msg = msg.replaceAll(str, "<filtered>");
+           
         }
+        
         return msg;
     }
 

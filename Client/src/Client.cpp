@@ -21,8 +21,9 @@ int main (int argc, char *argv[]) {
     }
 	
     bool* shouldTerminate = new bool(false);
-    ConsoleReader crTask(connectionHandler, shouldTerminate);
-    SocketReader srTask(connectionHandler, shouldTerminate);
+    bool* ready = new bool(false);
+    ConsoleReader crTask(connectionHandler, shouldTerminate,ready);
+    SocketReader srTask(connectionHandler, shouldTerminate,ready);
     thread srThread(&SocketReader::run, &srTask);
     thread crThread(&ConsoleReader::run, &crTask);
     
@@ -30,7 +31,8 @@ int main (int argc, char *argv[]) {
     crThread.join();
     srThread.join();
 
-    delete shouldTerminate;    
+    delete shouldTerminate;   
+    delete ready; 
 
     return 0;
 }
