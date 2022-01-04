@@ -104,9 +104,9 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
                 sendTo.addAll(this.user.getFollowers());
                 for (User user : sendTo) {
                     if (user.isOnline())
-                        this.connections.send(user.getConId(), "9 1 " + this.user.getUsername() + " " + post);
+                        this.connections.send(user.getConId(), "9 1 " + this.user.getUsername() + " " + post + ";");
                     else
-                        user.incomingMsg("9 1 " + this.user.getUsername() + " " + post);
+                        user.incomingMsg("9 1 " + this.user.getUsername() + " " + post + ";");
                 }
                 this.connections.send(this.connectionId, "10 5");
             }
@@ -123,9 +123,9 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
                     int endOfUsername = msg[2].indexOf(" ");
                     String pmMSG = this.user.pm(sendTo, msg[2].substring(endOfUsername + 1));
                     if (sendTo.isOnline())
-                        this.connections.send(sendTo.getConId(), "9 0 " + this.user.getUsername() + " " + pmMSG);
+                        this.connections.send(sendTo.getConId(), "9 0 " + this.user.getUsername() + " " + pmMSG + ";");
                     else
-                        sendTo.incomingMsg("9 0 " + this.user.getUsername() + " " + pmMSG);
+                        sendTo.incomingMsg("9 0 " + this.user.getUsername() + " " + pmMSG + ";");
                     this.connections.send(this.connectionId, "10 6");
                 }
             }

@@ -32,7 +32,6 @@ void SocketReader::run() {
             if (cHandler.getLine(optional))
                 cout << " " + optional.substr(0, optional.length() - 1) << endl;
             if (messageOpCode == 3) {
-                cout<<"logout called"<<endl;
                 *shouldTerminate = true;
                 *ready = true;
                 continue;
