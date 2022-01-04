@@ -1,6 +1,5 @@
 package bgu.spl.net;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Vector;

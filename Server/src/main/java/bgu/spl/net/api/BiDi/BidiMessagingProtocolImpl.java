@@ -1,8 +1,6 @@
 package bgu.spl.net.api.BiDi;
 
-import java.util.Arrays;
 import java.util.Vector;
-
 import bgu.spl.net.Database;
 import bgu.spl.net.User;
 
