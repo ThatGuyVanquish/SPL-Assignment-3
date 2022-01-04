@@ -96,14 +96,13 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
                 for (int i = 1; i < msg.length; i++) {
                     if (msg[i].indexOf('@') == 0) {
                         User atMention = DATABASE.getUser(msg[i].substring(1));
-                        if (atMention != null && !this.user.hasFollower(atMention))
+                        if (atMention != null && !atMention.isFollowing(this.user))
                             sendTo.add(atMention);
                     }
                     post = post + msg[i] + " ";
                 }
                 post = post.substring(0, post.length()-1);
                 this.user.post(post);
-                System.out.println(post);
                 sendTo.addAll(this.user.getFollowers());
                 for (User user : sendTo) {
                     if (user.isOnline())
@@ -119,15 +118,17 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
                 this.connections.send(this.connectionId, "11 6");
             else {
                 String username = msg[1];
+                System.out.println(username);
                 User sendTo = DATABASE.getUser(username);
-                if (sendTo == null || sendTo.hasFollower(this.user))
+                System.out.println(sendTo);
+                if (sendTo == null || !this.user.isFollowing(sendTo))
                     this.connections.send(this.connectionId, "11 6");
                 else {
-                    String pmMSG = this.user.pm(DATABASE.getUser(username), msg[2], msg[3]);
+                    String pmMSG = this.user.pm(sendTo, msg[2], msg[3]);
                     if (sendTo.isOnline())
-                        this.connections.send(sendTo.getConId(), "9 0 " + this.user.getUsername() + " " + pmMSG);
+                        this.connections.send(sendTo.getConId(), "9 0 @" + this.user.getUsername() + " " + pmMSG);
                     else
-                        sendTo.incomingMsg("9 0 " + this.user.getUsername() + " " + pmMSG);
+                        sendTo.incomingMsg("9 0 @" + this.user.getUsername() + " " + pmMSG);
                 }
             }
         }

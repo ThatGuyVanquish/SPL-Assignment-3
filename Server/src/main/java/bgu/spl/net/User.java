@@ -112,8 +112,8 @@ public class User {
         this.followersList.add(username);
     }
 
-    public boolean hasFollower(User username) {
-        for (User user : this.followersList) {
+    public boolean isFollowing(User username) {
+        for (User user : this.followingList) {
             if (user == username) return true;
         }
         return false;

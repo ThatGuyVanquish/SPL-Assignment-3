@@ -27,12 +27,12 @@ void SocketReader::run() {
             cout << "ACK " << messageOpCode;
             std::string optional;
             if (cHandler.getLine(optional))
-                cout << " " + optional << endl;
+                cout << " " + optional.substr(0, optional.length() - 1) << endl;
             if (messageOpCode == 3) {
                 cout<<"logout called"<<endl;
                 *shouldTerminate = true;
             }
-        }
+        }   
         else if (opCode == 9)
         {
             cHandler.getBytes(message, 2);
@@ -48,6 +48,7 @@ void SocketReader::run() {
             }
             std::string message;
             cHandler.getLine(message);
+            message = message.substr(0,message.length()-1);
             cout<< "NOTIFICATION " << notiType + " " << "@" + message<<endl;
         }
     }
