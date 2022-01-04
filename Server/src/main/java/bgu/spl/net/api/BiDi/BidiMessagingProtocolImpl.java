@@ -78,8 +78,6 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
                 }
             }
             else if (followOpCode == 0) { // Try to unfollow @msg[2]
-                System.out.println("Follow opcode is 0");
-                System.out.println("User to unfollow is " + DATABASE.getUser(msg[2]));
                 if (this.user.unfollow(DATABASE.getUser(msg[2]))) {
                     this.connections.send(this.connectionId, "10 4 " + msg[2]);
                 }
@@ -92,25 +90,26 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             if (this.user == null) 
                 this.connections.send(this.connectionId, "11 5");
             else {
-                String[] post = msg[1].split(" ");
-                this.user.post(msg[1]);
-                System.out.println(msg[1]);
-                System.out.println(Arrays.toString(msg));
+                String post = "";
+                //this.user.post(msg[1]);
                 Vector<User> sendTo = new Vector<>();
-                for (String str : post) {
-                    if (str.indexOf('@') == 0) {
-                        System.out.print("tetst");
-                        User atMention = DATABASE.getUser(str.substring(1));
+                for (int i = 1; i < msg.length; i++) {
+                    if (msg[i].indexOf('@') == 0) {
+                        User atMention = DATABASE.getUser(msg[i].substring(1));
                         if (atMention != null && !this.user.hasFollower(atMention))
                             sendTo.add(atMention);
                     }
+                    post = post + msg[i] + " ";
                 }
+                post = post.substring(0, post.length()-1);
+                this.user.post(post);
+                System.out.println(post);
                 sendTo.addAll(this.user.getFollowers());
                 for (User user : sendTo) {
                     if (user.isOnline())
-                        this.connections.send(user.getConId(), "9 1 " + this.user.getUsername() + " " + msg[1]);
+                        this.connections.send(user.getConId(), "9 1 " + this.user.getUsername() + " " + post);
                     else
-                        user.incomingMsg("9 1 " + this.user.getUsername() + " " + msg[1]);
+                        user.incomingMsg("9 1 " + this.user.getUsername() + " " + post);
                 }
                 this.connections.send(this.connectionId, "10 5");
             }
@@ -138,7 +137,6 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             else{
                 for (User user : DATABASE.getUsers()) {
                     if (user.isOnline()) {
-                        System.out.println(user.getStats());
                         this.connections.send(this.connectionId, "10 7 " + user.getStats());
                     }
                 }

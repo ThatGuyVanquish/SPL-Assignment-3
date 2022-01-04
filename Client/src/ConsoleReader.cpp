@@ -13,8 +13,7 @@ ConsoleReader::ConsoleReader(ConnectionHandler& cHandler, bool* shouldTerminate)
 
 void ConsoleReader::run() 
 {
-    while (!(*shouldTerminate))
-    {
+    while (!(*shouldTerminate)) {   
         std::string message;
         const short bufsize = 1024;
         char buf[bufsize];
