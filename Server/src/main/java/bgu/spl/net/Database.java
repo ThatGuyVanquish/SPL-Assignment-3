@@ -49,7 +49,6 @@ public class Database {
            msg = msg.replaceAll(str, "<filtered>");
            
         }
-        
         return msg;
     }
 
