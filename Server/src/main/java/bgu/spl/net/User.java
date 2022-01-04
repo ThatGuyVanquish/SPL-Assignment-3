@@ -38,7 +38,7 @@ public class User {
 
     public boolean login(String username, String password, String captcha) {
         if (this.isOnline()) return false;
-        if (captcha.equals("0")) return false;
+        if (!captcha.equals("1")) return false;
         if (username.equals(this.username) && password.equals(this.password)) {
             this.loginStatus = true;
             return true;
