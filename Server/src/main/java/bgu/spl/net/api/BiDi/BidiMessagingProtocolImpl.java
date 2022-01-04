@@ -118,17 +118,17 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
                 this.connections.send(this.connectionId, "11 6");
             else {
                 String username = msg[1];
-                System.out.println(username);
                 User sendTo = DATABASE.getUser(username);
-                System.out.println(sendTo);
                 if (sendTo == null || !this.user.isFollowing(sendTo))
                     this.connections.send(this.connectionId, "11 6");
                 else {
-                    String pmMSG = this.user.pm(sendTo, msg[2], msg[3]);
+                    int endOfUsername = msg[2].indexOf(" ");
+                    String pmMSG = this.user.pm(sendTo, msg[2].substring(endOfUsername + 1));
                     if (sendTo.isOnline())
-                        this.connections.send(sendTo.getConId(), "9 0 @" + this.user.getUsername() + " " + pmMSG);
+                        this.connections.send(sendTo.getConId(), "9 0 " + this.user.getUsername() + " " + pmMSG);
                     else
-                        sendTo.incomingMsg("9 0 @" + this.user.getUsername() + " " + pmMSG);
+                        sendTo.incomingMsg("9 0 " + this.user.getUsername() + " " + pmMSG);
+                    this.connections.send(this.connectionId, "10 6");
                 }
             }
         }

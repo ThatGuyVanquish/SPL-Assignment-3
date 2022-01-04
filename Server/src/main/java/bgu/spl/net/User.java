@@ -170,13 +170,14 @@ public class User {
         return false;
     }
 
-    public String pm(User user, String pm, String time) {
+    public String pm(User user, String pm) {
         pm = DATABASE.filterString(pm);
-        if (this.pms.keySet().contains(user)) this.pms.get(user).add(pm + " " + time);
+        if (this.pms.keySet().contains(user)) this.pms.get(user).add(pm);
         else {  
             this.pms.put(user, new Vector<String>());
-            this.pms.get(user).add(pm + " " + time);
+            this.pms.get(user).add(pm);
         }
+        pm = pm.substring(0, pm.length() - 17);
         return pm;
     }
 
