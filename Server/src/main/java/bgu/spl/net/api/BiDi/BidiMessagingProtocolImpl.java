@@ -138,7 +138,10 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             else{
                 for (User user : DATABASE.getUsers()) {
                     if (user.isOnline()) {
-                        this.connections.send(this.connectionId, "10 7 " + user.getStats());
+                        if (this.user.isBlocked(user))
+                            this.connections.send(this.connectionId, "11 7");
+                        else
+                            this.connections.send(this.connectionId, "10 7 " + user.getStats());
                     }
                 }
             } 
@@ -149,7 +152,11 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
             else{
                 String[] users = msg[1].split("\\|");
                 for (String user : users) {
-                    this.connections.send(this.connectionId, "10 8 " + DATABASE.getUser(user).getStats());
+                    User currentUser = DATABASE.getUser(user);
+                    if (this.user.isBlocked(currentUser))
+                        this.connections.send(this.connectionId, "11 8");
+                    else
+                        this.connections.send(this.connectionId, "10 8 " + currentUser.getStats());
                 }
             } 
         }

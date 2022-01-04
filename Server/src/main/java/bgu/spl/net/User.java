@@ -177,7 +177,6 @@ public class User {
             this.pms.put(user, new Vector<String>());
             this.pms.get(user).add(pm);
         }
-        pm = pm.substring(0, pm.length() - 17);
         return pm;
     }
 
@@ -193,6 +192,10 @@ public class User {
         if (!this.incoming.isEmpty())
             return this.incoming.remove(0);
         return null;
+    }
+
+    public boolean isBlocked(User user) {
+        return this.blockedBy.indexOf(user) != -1;
     }
 
 }

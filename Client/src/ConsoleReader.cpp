@@ -30,7 +30,7 @@ void ConsoleReader::run()
         else if (msg[0] == "LOGIN")
         {
             shortToBytes(2, opCode);
-            message = msg[1] + '\0' + msg[2] + '\0' + "1" + '\0';
+            message = msg[1] + '\0' + msg[2] + '\0' + msg[3] + '\0';
         }
         else if (msg[0] == "LOGOUT")
         {
