@@ -76,6 +76,7 @@ public class User {
      * @param username username of the person to follow
      */
     public boolean follow(User username) {
+        if (username == null) return false;
         if (!DATABASE.isRegistered(username.getUsername())) return false;
         if (this.followingList.indexOf(username) == -1 && this.blockList.indexOf(username) == -1 && this.blockedBy.indexOf(username) == -1){
             this.followingList.add(username);
@@ -92,6 +93,7 @@ public class User {
      * @param username username of the person to follow
      */
     public boolean unfollow(User username) {
+        if (username == null) return false;
         if (!DATABASE.isRegistered(username.getUsername())) {
             return false;
         }

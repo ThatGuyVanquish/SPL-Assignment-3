@@ -65,18 +65,21 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
         }
         else if (opCode == 4) { // Follow/Unfollow
             int followOpCode = Integer.parseInt(msg[1]);
+            User currentUser = DATABASE.getUser(msg[2]);
             if (this.user == null) 
                 this.connections.send(this.connectionId, "11 4");
-            else if (followOpCode == 1) { // Try to follow @msg[2]
-                if (this.user.follow(DATABASE.getUser((msg[2])))) {
+            else if (currentUser.equals(this.user))
+                this.connections.send(this.connectionId, "11 4");
+            else if (followOpCode == 0) { // Try to follow @msg[2]
+                if (this.user.follow(currentUser)) {
                     this.connections.send(this.connectionId, "10 4 " + msg[2]);
                 }
                 else {
                     this.connections.send(this.connectionId, "11 4"); // Couldn't follow
                 }
             }
-            else if (followOpCode == 0) { // Try to unfollow @msg[2]
-                if (this.user.unfollow(DATABASE.getUser(msg[2]))) {
+            else if (followOpCode == 1) { // Try to unfollow @msg[2]
+                if (this.user.unfollow(currentUser)) {
                     this.connections.send(this.connectionId, "10 4 " + msg[2]);
                 }
                 else {
@@ -151,6 +154,10 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
                 String[] users = msg[1].split("\\|");
                 for (String user : users) {
                     User currentUser = DATABASE.getUser(user);
+                    if (currentUser == null) {
+                        this.connections.send(this.connectionId, "11 8");
+                        continue;
+                    }
                     if (this.user.isBlocked(currentUser))
                         this.connections.send(this.connectionId, "11 8");
                     else
