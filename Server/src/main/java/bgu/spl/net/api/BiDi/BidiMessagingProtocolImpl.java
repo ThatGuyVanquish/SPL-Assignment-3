@@ -66,7 +66,7 @@ public class BidiMessagingProtocolImpl implements BidiMessagingProtocol<String>{
         else if (opCode == 4) { // Follow/Unfollow
             int followOpCode = Integer.parseInt(msg[1]);
             User currentUser = DATABASE.getUser(msg[2]);
-            if (this.user == null) 
+            if (this.user == null || currentUser == null) 
                 this.connections.send(this.connectionId, "11 4");
             else if (currentUser.equals(this.user))
                 this.connections.send(this.connectionId, "11 4");
