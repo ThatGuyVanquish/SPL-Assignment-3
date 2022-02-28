@@ -1,13 +1,16 @@
 #include "../include/SocketReader.h"
+#include <iostream>
 #include <boost/algorithm/string.hpp>
 #include "boost/lexical_cast.hpp"
+#include <thread>
+
 using namespace std;
 
 
-SocketReader::SocketReader(ConnectionHandler &handler, bool* shouldTerminate,bool* ready): 
-cHandler(handler), 
-shouldTerminate(shouldTerminate),
-ready(ready)
+SocketReader::SocketReader(ConnectionHandler& handler, bool* shouldTerminate, bool* ready): 
+    cHandler(handler), 
+    shouldTerminate(shouldTerminate),
+    ready(ready)
 {};
 
 void SocketReader::run() {

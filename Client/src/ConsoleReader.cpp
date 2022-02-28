@@ -1,5 +1,4 @@
 #include "../include/ConsoleReader.h"
-#include <mutex>
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 #include "boost/lexical_cast.hpp"

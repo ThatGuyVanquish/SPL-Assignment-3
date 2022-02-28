@@ -1,7 +1,9 @@
 #ifndef SOCKET_READER__
 #define SOCKET_READER__
 
-#include "connectionHandler.h"                    
+#include "connectionHandler.h"      
+
+using namespace std;
 
 class SocketReader{
     private: 
@@ -9,7 +11,7 @@ class SocketReader{
     bool* shouldTerminate;
     bool* ready;
     public:
-    SocketReader(ConnectionHandler& cHandler, bool* shouldTerminate,bool* ready);
+    SocketReader(ConnectionHandler& cHandler, bool* shouldTerminate, bool* ready);
     void run();
     short bytesToShort(char* bytesArr);
 };
