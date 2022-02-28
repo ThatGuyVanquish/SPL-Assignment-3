@@ -4,7 +4,7 @@ Written in Java, C++
 
 The Assignment:
 Simulate a social network, using Thread Per Client and Reactor design patterns.
-The servers were programmed in Java and the console based client was programmed in C++.
+The servers were programmed in Java and the console based client was programmed in C++.Cancel changes
 This assignment tested our skills in C++, Java, threading and concurrency, server design patterns.
 
 1) How to run the code:
