@@ -1,8 +1,11 @@
-Assignment 3 in the course Systems Programming in BGU, graded 100.
+BGU Course Systems Programming, Assignment 3 Created by Tom and Nave Grade: 100
 
-In this assignment we were tasked with simulating a social network based on Thread Per Client and Reactor design patterns. 
-The servers were programmed in Java and the terminal client was programmed in C++.
+Written in Java, C++
 
+The Assignment:
+Simulate a social network, using Thread Per Client and Reactor design patterns.
+The servers were programmed in Java and the console based client was programmed in C++.
+This assignment tested our skills in C++, Java, threading and concurrency, server design patterns.
 
 1) How to run the code:
 1.1)
