@@ -3,6 +3,11 @@
 
 #include "connectionHandler.h"
 
+#include <iostream>
+#include <boost/algorithm/string.hpp>
+#include "boost/lexical_cast.hpp"
+#include <thread>
+
 using namespace std;
 
 class ConsoleReader{
@@ -10,6 +15,7 @@ class ConsoleReader{
     ConnectionHandler& cHandler;
     bool* shouldTerminate;
     bool* ready;
+    
     public:
     ConsoleReader(ConnectionHandler& cHandler, bool* shouldTerminate, bool* ready);
     void run();

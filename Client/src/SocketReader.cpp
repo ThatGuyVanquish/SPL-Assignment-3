@@ -1,11 +1,6 @@
 #include "../include/SocketReader.h"
-#include <iostream>
-#include <boost/algorithm/string.hpp>
-#include "boost/lexical_cast.hpp"
-#include <thread>
 
 using namespace std;
-
 
 SocketReader::SocketReader(ConnectionHandler& handler, bool* shouldTerminate, bool* ready): 
     cHandler(handler), 
@@ -16,7 +11,6 @@ SocketReader::SocketReader(ConnectionHandler& handler, bool* shouldTerminate, bo
 void SocketReader::run() {
     while (!(*shouldTerminate)) {
         char message[2];
-        
         cHandler.getBytes(message, 2); // Receives Server to Client message op-code
         short opCode = bytesToShort(message);
         if (opCode == 11) {
@@ -58,7 +52,6 @@ void SocketReader::run() {
             message = message.substr(0,message.length()-1);
             cout<< "NOTIFICATION " << notiType + " " << "@" + message<<endl;
         }
-        
     }
 }
 

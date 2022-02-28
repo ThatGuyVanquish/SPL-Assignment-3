@@ -11,6 +11,7 @@ int main (int argc, char *argv[]) {
         std::cerr << "Usage: " << argv[0] << " host port" << std::endl << std::endl;
         return -1;
     }
+
     std::string host = argv[1];
     short port = atoi(argv[2]);
     
@@ -27,7 +28,6 @@ int main (int argc, char *argv[]) {
     thread srThread(&SocketReader::run, &srTask);
     thread crThread(&ConsoleReader::run, &crTask);
     
-
     crThread.join();
     srThread.join();
 

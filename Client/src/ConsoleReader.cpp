@@ -1,8 +1,4 @@
 #include "../include/ConsoleReader.h"
-#include <iostream>
-#include <boost/algorithm/string.hpp>
-#include "boost/lexical_cast.hpp"
-#include <thread>
 
 using namespace std;
 
@@ -36,7 +32,7 @@ void ConsoleReader::run()
             if (date[0].size() > 2 || date[0].size() < 1 || date[1].size() > 2 || date[1].size() < 1 || date[2].size() > 4 || date[2].size() < 1)
             {
                 cout<<"ERROR Bad input"<<endl;
-                continue; // Break current iteration if date is borked
+                continue; // Break current iteration if date is not properly formatted
             }
             bool stop = false;
             for (std::string part : date) 
